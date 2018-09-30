@@ -43,7 +43,7 @@ void renew_media(media_t* mdi)
 {
 	if(NULL!=mdi)
 	{		
-		create_media_write_to_log(mdi, MEDIA_RENEW, NULL);
+		create_media_write_to_log(mdi, MEDIA_RENEW, NULL);			
 		mdi->hit_digest = 0;
 	}	
 }
@@ -161,7 +161,7 @@ void send_survey(frag_in_t* frg, media_t* mdi, struct Maat_rule_t* scan_result)
 	memset(&meta, 0, sizeof(struct tango_cache_meta));
 	meta.url = key;	
 
-	pdata = (struct future_pdata *)malloc(sizeof(struct future_pdata));
+	pdata = (struct future_pdata *)calloc(1, sizeof(struct future_pdata));
 	pdata->future = future_create(put_future_success, put_future_failed, pdata);	
 	promise_set_ctx(future_to_promise(pdata->future), NULL, NULL);
 	cache_evbase_upload_once_data(g_dd_run.instance_asyn[mdi->thread_seq], pdata->future, PUT_MEM_COPY, frg->data, frg->datalen, &meta, out_fullfilename, sizeof(out_fullfilename));

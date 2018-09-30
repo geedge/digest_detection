@@ -17,8 +17,8 @@ CC              = g++
 CCC             = g++
 
 LIB		= -L./lib/ 
-LIB		+= -lssl -lcrypto -lxml2 -lcurl -levent
-LIB		+= -lMESA_handle_logger -lMESA_prof_load -lmaatframe -lrulescan -lMESA_htable -lMESA_field_stat2 -lpthread
+LIB		+= -lssl -lcrypto -lxml2 -lcurl -levent -lpthread
+LIB		+= -lMESA_handle_logger -lMESA_prof_load -lmaatframe -lrulescan -lMESA_htable -lMESA_field_stat2 -lWiredLB
 LIB		+= ./lib/libmy_socket.a
 LIB		+= ./lib/pangu_tango_cache.a
 #LIB		+= ./lib/libdictator_debug.a

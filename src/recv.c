@@ -71,7 +71,7 @@ void proc_data(uint32_t thread_id, uint32_t src_ip, char* packet, int size)
 				inet_ntop(AF_INET, &src_ip, pbuf, buf_len);				
 				{
 					MESA_handle_runtime_log(g_dd_run.logger, RLOG_LV_DEBUG, DD_MODULE_NAME, 
-							    			"{%s:%d} %s:%u RECV DATA [PID:%llu, offset:%llu, datalen:%u]", 
+							    			"{%s:%d} %s:%hd RECV DATA [PID:%llu, offset:%llu, datalen:%u]", 
 						   	 				__FILE__,__LINE__, pbuf, g_dd_cfg.recv_port, *(uint64_t*)mdata->pid, mdata->offset, mhead->c_len-sizeof(av_data_t));
 				}
 			} 				

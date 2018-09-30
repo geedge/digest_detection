@@ -310,9 +310,9 @@ void resp_write_to_log(int type, msg_result_t* msi_survey, void* param1, void* p
 	{
 		case SEND_SURVEY:			
 			buflen = snprintf(buf, sizeof(buf), 
-							  "%s.%ld,%20s,MID:%" PRIu64 ",service:%d,cfgid:%u,recv_byte:%" PRIu64 ",media_len:%" PRIu64 ",DataURL:%s\n",
+							  "%s.%ld,%20s,MID:%" PRIu64 ",service:%d,cfgid:%u,recv_byte:%" PRIu64 ",media_len:%" PRIu64 ",thread_id:%d,DataURL:%s\n",
 							  now_time, tv.tv_usec,"send_survey",
-							  *(uint64_t*)msi_survey->pid, msi_survey->servicetype, msi_survey->cfgid, mdi->byte_in,mdi->media_len,(char*)param1);
+							  *(uint64_t*)msi_survey->pid, msi_survey->servicetype, msi_survey->cfgid, mdi->byte_in,mdi->media_len,mdi->thread_seq,(char*)param1);
 			
 			break;
 

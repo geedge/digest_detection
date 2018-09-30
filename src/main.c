@@ -22,12 +22,13 @@
 #include "my_socket.h"
 #include "cache_evbase_client.h"
 
-int DD_VERSION_1_0_20180927 = 0;
+int DD_VERSION_1_0_20180930 = 0;
 const char* dd_version_des = "MESA@iie digest";
 
 void digest_detection_history()
 {
 	//2018.09.27  v1.0  create the project		
+	//2018.09.30  v1.0  update cache		
 }
 
 dd_parameter_t 		g_dd_run;
@@ -252,11 +253,11 @@ int   main(int argc, char **argv)
 	{		
 		return -1;
 	}
-
+	
 	for(uint32_t i=0;i<g_dd_cfg.thread_num;i++)
 	{
 		g_dd_run.instance_asyn[i] = cache_evbase_instance_new("./conf/main.conf", "TANGO_CACHE", g_dd_run.logger);
-	}
+	}	
 
 	/*stat thread*/
 	if(0<g_dd_stat.stat_interval)
@@ -288,12 +289,15 @@ int   main(int argc, char **argv)
 		return -1;
 	}	
 
-	if(-1 == create_pthread(recv_data_from_queue,NULL, g_dd_run.logger))
-	{
-		MESA_handle_runtime_log(g_dd_run.logger, RLOG_LV_FATAL, DD_MODULE_NAME, 
-								(char*)"[%s:%d] recv_data_from_queue Create Failed." , __FILE__,__LINE__);
-		return -1;
-	}
+	for(uint32_t i=0;i<g_dd_cfg.thread_num;i++)
+	{    	
+		if(-1 == create_pthread(recv_data_from_queue,(void*)i, g_dd_run.logger))
+		{
+			MESA_handle_runtime_log(g_dd_run.logger, RLOG_LV_FATAL, DD_MODULE_NAME, 
+									(char*)"[%s:%d] recv_data_from_queue Create Failed." , __FILE__,__LINE__);
+			return -1;
+		}
+	}	
 	
 	while(1)
 	{
