@@ -1,0 +1,3 @@
+source /root/.bash_profile
+./dd_r3 &> /dev/null &
+./kill_dd_by_mem.sh &> /dev/null &
