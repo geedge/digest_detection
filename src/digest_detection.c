@@ -27,6 +27,21 @@ extern dd_parameter_t 		g_dd_run;
 extern dd_configure_t 		g_dd_cfg;
 extern dd_status_t 			g_dd_stat;
 
+media_type_t g_file_mediatype_des[MEDIATYPE_MAXNUM] = 
+{
+	{FILE_UNKNOWN, 	"unkonwn"},
+	{FILE_CONTENT,	"unkonwn"},
+	{FILE_DOC, 		"doc"},	
+	{FILE_DOCX, 	"docx"},
+	{FILE_XLS, 		"xls"},	
+	{FILE_XLSX, 	"xlsx"},
+	{FILE_PPT, 		"ppt"},
+	{FILE_PPTX, 	"pptx"},
+	{FILE_PDF, 		"pdf"},
+	{FILE_EXE, 		"exe"},
+	{FILE_APK,		"apk"},	
+};
+
 void free_media(void* data)
 {
 	media_t* mdi = (media_t*)data;
@@ -44,7 +59,9 @@ void renew_media(media_t* mdi)
 	if(NULL!=mdi)
 	{		
 		create_media_write_to_log(mdi, MEDIA_RENEW, NULL);			
-		mdi->hit_digest = 0;
+		mdi->hit_digest = 0;		
+		Maat_stream_scan_digest_end(&mdi->digest_stream_para);		
+		mdi->digest_stream_para = Maat_stream_scan_digest_start(g_dd_run.feather,g_dd_run.digest_tableid,mdi->media_len,g_dd_cfg.thread_num);
 	}	
 }
 
@@ -129,6 +146,18 @@ void put_future_failed(enum e_future_error err, const char * what, void * user)
 	free(pdata);
 }
 
+char* gen_filesuffix_by_mediatype(uint8_t mediatype)
+{	
+	for(int i=1;i<MEDIATYPE_MAXNUM;i++)
+	{
+		if(mediatype==g_file_mediatype_des[i].media_type)
+		{
+			return g_file_mediatype_des[i].media_type_desc;
+		}
+	}
+	return g_file_mediatype_des[0].media_type_desc;		
+}
+
 void send_survey(frag_in_t* frg, media_t* mdi, struct Maat_rule_t* scan_result)
 {
 	int							send_rec = 0;
@@ -157,7 +186,7 @@ void send_survey(frag_in_t* frg, media_t* mdi, struct Maat_rule_t* scan_result)
 	gettimeofday(&tv, &tz);
 	localtime_r(&tv.tv_sec, &now);
 	strftime(day_time, sizeof(day_time), "%Y%m%d", &now);
-	snprintf(key, sizeof(key), "%s/%lu", day_time, mdi->mid);
+	snprintf(key, sizeof(key), "%s/%lu.%s", day_time, mdi->mid, gen_filesuffix_by_mediatype(mdi->media_type));
 	memset(&meta, 0, sizeof(struct tango_cache_meta));
 	meta.url = key;	
 
@@ -210,12 +239,13 @@ long media_preproc_cb(void *data, const uint8_t *key, uint size, void *user_arg)
 		ret = Maat_stream_scan_digest(&mdi->digest_stream_para, frg->data, frg->datalen, frg->offset, scan_result, MAX_SCAN_RESULT, &mdi->scan_mid);
 		if(ret>0)
 		{
-			mdi->hit_digest = 1;
+			mdi->hit_digest = 1;			
 		}
 		for(int i=0;i<ret;i++)
 		{
 			send_survey(frg, mdi, &scan_result[i]);
 		}	
+		Maat_clean_status(&mdi->scan_mid);
 	}		
 	return 0;
 }

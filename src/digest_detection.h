@@ -6,11 +6,31 @@
 
 #define	MAX_SCAN_RESULT	8
 
+/*媒体类型，与前端一致*/
+#define FILE_UNKNOWN    	0x00
+#define FILE_CONTENT		0x03
+#define	FILE_DOC			0xF0
+#define	FILE_DOCX			0xF1
+#define	FILE_XLS			0xF2
+#define	FILE_XLSX			0xF3
+#define	FILE_PPT			0xF4
+#define	FILE_PPTX			0xF5
+#define	FILE_PDF			0xF6
+#define	FILE_EXE			0xF7
+#define	FILE_APK			0xF8
+#define	MEDIATYPE_MAXNUM	11
+
 struct future_pdata
 {
 	struct future* 			future;
 	char 					filename[256];
 };
+
+typedef struct media_type_s
+{
+	uint8_t 				media_type;
+	char 					media_type_desc[32];	
+} media_type_t;
 
 typedef struct media_s
 {		

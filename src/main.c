@@ -22,13 +22,14 @@
 #include "my_socket.h"
 #include "cache_evbase_client.h"
 
-int DD_VERSION_1_0_20180930 = 0;
+int DD_VERSION_1_0_20181211 = 0;
 const char* dd_version_des = "MESA@iie digest";
 
 void digest_detection_history()
 {
 	//2018.09.27  v1.0  create the project		
-	//2018.09.30  v1.0  update cache		
+	//2018.09.30  v1.0  update cache	
+	//2018.12.11  v1.0  add file suffix		
 }
 
 dd_parameter_t 		g_dd_run;
