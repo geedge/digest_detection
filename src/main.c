@@ -248,16 +248,23 @@ int   main(int argc, char **argv)
 	memset(&g_dd_run, 0, sizeof(dd_parameter_t));	
 	memset(&g_dd_cfg, 0, sizeof(dd_configure_t));
 	memset(&g_dd_stat, 0, sizeof(dd_status_t));
+	struct tango_cache_parameter *parameter;
 
 	/*read main.conf and init*/
 	if(-1==read_conf_and_init("./conf/main.conf"))
 	{		
 		return -1;
 	}
+
+	parameter = cache_evbase_parameter_new("./conf/main.conf", "TANGO_CACHE", g_dd_run.logger);
+	if(parameter == NULL)
+	{
+		return -1;
+	}
 	
 	for(uint32_t i=0;i<g_dd_cfg.thread_num;i++)
 	{
-		g_dd_run.instance_asyn[i] = cache_evbase_instance_new("./conf/main.conf", "TANGO_CACHE", g_dd_run.logger);
+		g_dd_run.instance_asyn[i] = cache_evbase_instance_new(parameter, g_dd_run.logger);
 	}	
 
 	/*stat thread*/

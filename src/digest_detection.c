@@ -165,7 +165,7 @@ void send_survey(frag_in_t* frg, media_t* mdi, struct Maat_rule_t* scan_result)
 	char 						buf_survey[BUF_SIZE] = {0};   
 	msg_head_t*					mh_survey = (msg_head_t*)buf_survey;
 	msg_result_t*				msi_survey = (msg_result_t *)(buf_survey + sizeof(msg_head_t));
-	struct tango_cache_meta 	meta;
+	struct tango_cache_meta_put meta;
 	struct future_pdata*		pdata;
 	char 						key[256] = {0};
 	char 						out_fullfilename[256] = {0};
@@ -187,7 +187,7 @@ void send_survey(frag_in_t* frg, media_t* mdi, struct Maat_rule_t* scan_result)
 	localtime_r(&tv.tv_sec, &now);
 	strftime(day_time, sizeof(day_time), "%Y%m%d", &now);
 	snprintf(key, sizeof(key), "%s/%lu.%s", day_time, mdi->mid, gen_filesuffix_by_mediatype(mdi->media_type));
-	memset(&meta, 0, sizeof(struct tango_cache_meta));
+	memset(&meta, 0, sizeof(struct tango_cache_meta_put));
 	meta.url = key;	
 
 	pdata = (struct future_pdata *)calloc(1, sizeof(struct future_pdata));

@@ -17,10 +17,10 @@ CC              = g++
 CCC             = g++
 
 LIB		= -L./lib/ 
-LIB		+= -lssl -lcrypto -lxml2 -lcurl -levent -lpthread
-LIB		+= -lMESA_handle_logger -lMESA_prof_load -lmaatframe -lrulescan -lMESA_htable -lMESA_field_stat2 -lWiredLB
+#LIB		+= -lssl -lcrypto -lxml2 -lcurl -levent -lpthread
+LIB		+= -lMESA_handle_logger -lMESA_prof_load -lmaatframe -lrulescan -lMESA_htable -lMESA_field_stat2 -lWiredLB -lpthread
 LIB		+= ./lib/libmy_socket.a
-LIB		+= ./lib/pangu_tango_cache.a
+LIB		+= ./lib/libtango_cache_client.a ./lib/libcjson.a  ./lib/libcrypto.a  ./lib/libcurl.a  ./lib/libevent.a  ./lib/libhiredis.a  ./lib/libssl.a ./lib/libxml2.a -lz
 #LIB		+= ./lib/libdictator_debug.a
 
 LIB_FILE	= $(wildcard ../lib/*.a)
@@ -41,7 +41,7 @@ $(TARGET):$(OBJECTS) $(OBJECTSCPP)  $(LIB_FILE)
 	#$(CCC) -shared $(CFLAGS) $(OBJECTS) $(LIB) -o $@
 	$(CCC) $(CFLAGS) $(OBJECTS) $(OBJECTSCPP)  $(LIB) $(LDDICTATOR) -o $@
 	cp $(TARGET) ../bin/
-	cp $(TARGET) /home/mesasoft/dd/
+#	cp $(TARGET) /home/mesasoft/dd/
 	
 .c.o:
 #%.d:%.c
