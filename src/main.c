@@ -138,7 +138,8 @@ int read_conf_and_init(const char* filename)
 	char						table_info_filename [MAX_PATH_LEN]={0};	
 	unsigned int 				maat_redis_switch = 1;	
 	char 						maat_redis_ip[MAX_PATH_LEN] = {0};
-	unsigned short 				maat_redis_port = 6379;
+	unsigned short 				maat_redis_port = 6379;	
+	unsigned short 				maat_redis_index = 0;
 	char						full_index[MAX_PATH_LEN]={0}; 
 	char						inc_index[MAX_PATH_LEN]={0}; 	
 	uint32_t					hash_thread_safe = 512;
@@ -214,9 +215,11 @@ int read_conf_and_init(const char* filename)
 	if(maat_redis_switch)
 	{		
 		MESA_load_profile_string_def(filename,"MAAT","MaatRedisIP",maat_redis_ip,sizeof(maat_redis_ip),"");		
-		MESA_load_profile_short_def(filename, "MAAT", "MaatRedisPort", (short*)&maat_redis_port,6379);
+		MESA_load_profile_short_def(filename, "MAAT", "MaatRedisPort", (short*)&maat_redis_port,6379);		
+		MESA_load_profile_short_def(filename, "MAAT", "MaatRedisIndex", (short*)&maat_redis_index,0);
 		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_REDIS_IP, maat_redis_ip, strlen(maat_redis_ip)+1);				
 		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_REDIS_PORT, &maat_redis_port, sizeof(maat_redis_port));
+		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_REDIS_INDEX, &maat_redis_index, sizeof(maat_redis_index));
 	}
 	else
 	{	
