@@ -135,7 +135,10 @@ int read_conf_and_init(const char* filename)
 {
 	char						conf_buf[MAX_PATH_LEN]={0}; 
 	MESA_htable_create_args_t 	hash_args;
-	char						table_info_filename [MAX_PATH_LEN]={0};			
+	char						table_info_filename [MAX_PATH_LEN]={0};	
+	unsigned int 				maat_redis_switch = 1;	
+	char 						maat_redis_ip[MAX_PATH_LEN] = {0};
+	unsigned short 				maat_redis_port = 6379;
 	char						full_index[MAX_PATH_LEN]={0}; 
 	char						inc_index[MAX_PATH_LEN]={0}; 	
 	uint32_t					hash_thread_safe = 512;
@@ -204,11 +207,25 @@ int read_conf_and_init(const char* filename)
 		return -1;
 	}
 	
-	/*maat初始化*/			
+	/*maat初始化*/	
+	MESA_load_profile_uint_def(filename, "MAAT", "MaatRedisSwitch", &maat_redis_switch,1);	
 	MESA_load_profile_string_def(filename,"MAAT","MaatTableInfo",table_info_filename,sizeof(table_info_filename),"./conf/table_info.conf");
-	MESA_load_profile_string_def(filename,"MAAT","FullCfgDir",full_index,sizeof(full_index),"./conf/full/index/");
-	MESA_load_profile_string_def(filename,"MAAT","IncCfgDir",inc_index,sizeof(inc_index),"./conf/inc/index/");
-	g_dd_run.feather = Maat_summon_feather(g_dd_cfg.thread_num,table_info_filename,full_index,inc_index,g_dd_run.logger);
+	g_dd_run.feather = Maat_feather(g_dd_cfg.thread_num, table_info_filename, g_dd_run.logger);
+	if(maat_redis_switch)
+	{		
+		MESA_load_profile_string_def(filename,"MAAT","MaatRedisIP",maat_redis_ip,sizeof(maat_redis_ip),"");		
+		MESA_load_profile_short_def(filename, "MAAT", "MaatRedisPort", (short*)&maat_redis_port,6379);
+		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_REDIS_IP, maat_redis_ip, strlen(maat_redis_ip)+1);				
+		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_REDIS_PORT, &maat_redis_port, sizeof(maat_redis_port));
+	}
+	else
+	{	
+		MESA_load_profile_string_def(filename,"MAAT","FullCfgDir",full_index,sizeof(full_index),"./conf/full/index/");
+		MESA_load_profile_string_def(filename,"MAAT","IncCfgDir",inc_index,sizeof(inc_index),"./conf/inc/index/");
+		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_FULL_CFG_DIR, full_index, strlen(full_index)+1);			
+		Maat_set_feather_opt(g_dd_run.feather, MAAT_OPT_INC_CFG_DIR, inc_index, strlen(inc_index)+1);
+	}
+	Maat_initiate_feather(g_dd_run.feather);
 	g_dd_run.digest_tableid = Maat_table_register(g_dd_run.feather,MM_FILE_DIGEST_TABLENAME);
 
 	/*recv data*/
